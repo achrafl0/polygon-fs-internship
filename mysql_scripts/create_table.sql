@@ -1,0 +1,5 @@
+CREATE TABLE [IF NOT EXISTS] Trackings (
+id INT PRIMARY KEY AUTO_INCREMENT,
+request_time TIMESTAMP,
+response_time TIMESTAMP,
+);
