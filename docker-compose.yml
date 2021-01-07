@@ -15,6 +15,7 @@ services:
       - "3306"
     volumes:
       - polygon-perf-db:/var/lib/mysql
+      - ./mysql_scripts:/docker-entrypoint-initdb.d
   polygon-perf-back:
     build: ./polygon-perf-back
     restart: always
