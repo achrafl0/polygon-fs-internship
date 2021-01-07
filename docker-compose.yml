@@ -1,0 +1,36 @@
+version: "3"
+
+services:
+  polygon-perf-db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: "db"
+      MYSQL_USER: "polygon"
+      MYSQL_PASSWORD: "polygoniscool"
+      MYSQL_ROOT_PASSWORD: "polygonisnice"
+    ports:
+      - "3306:3306"
+    expose:
+      - "3306"
+    volumes:
+      - polygon-perf-db:/var/lib/mysql
+  polygon-perf-back:
+    build: ./polygon-perf-back
+    restart: always
+    ports:
+      - "1337:1337"
+    volumes:
+      - ./polygon-perf-back:/polygon-perf-back
+
+  polygon-perf-front:
+    build: ./polygon-perf-front
+    restart: always
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./polygon-perf-front:/polygon-perf-front/
+      - /polygon-perf-front/node_modules/
+
+volumes:
+  polygon-perf-db:
