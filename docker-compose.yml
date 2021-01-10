@@ -2,13 +2,14 @@ version: "3"
 
 services:
   polygon-perf-db:
+    container_name: "polygon-perf-db"
     image: mysql:5.7
     restart: always
     environment:
       MYSQL_DATABASE: "db"
       MYSQL_USER: "polygon"
-      MYSQL_PASSWORD: "polygoniscool"
-      MYSQL_ROOT_PASSWORD: "polygonisnice"
+      MYSQL_PASSWORD: "polygon"
+      MYSQL_ROOT_PASSWORD: "polygon"
     ports:
       - "3306:3306"
     expose:
@@ -16,13 +17,27 @@ services:
     volumes:
       - polygon-perf-db:/var/lib/mysql
       - ./mysql_scripts:/docker-entrypoint-initdb.d
+    networks:
+      - local-net
+
   polygon-perf-back:
+    container_name: "polygon-perf-back"
     build: ./polygon-perf-back
     restart: always
+    links:
+      - polygon-perf-db
     ports:
       - "1337:1337"
     volumes:
       - ./polygon-perf-back:/polygon-perf-back
+    networks:
+      - local-net
+    depends_on:
+      - polygon-perf-db
+    # We are using wait here to be sure that the MySQL database is up before running the back so no errors
+    command: sh -c "/wait && uvicorn app.main:server --host 0.0.0.0 --port 1337"
+    environment:
+      WAIT_HOSTS: polygon-perf-db:3306
 
   polygon-perf-front:
     build: ./polygon-perf-front
@@ -32,6 +47,19 @@ services:
     volumes:
       - ./polygon-perf-front:/polygon-perf-front/
       - /polygon-perf-front/node_modules/
+    networks:
+      - local-net
+    depends_on:
+      - polygon-perf-db
+      - polygon-perf-back
+    # We are using wait here to be sure that the back database is up before running the front so no errors
+    command: sh -c "/wait && yarn run serve"
+    environment:
+      WAIT_HOSTS: polygon-perf-back:1337
 
 volumes:
   polygon-perf-db:
+
+networks:
+  local-net:
+    driver: bridge
