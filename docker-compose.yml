@@ -41,6 +41,7 @@ services:
 
   polygon-perf-front:
     build: ./polygon-perf-front
+    container_name: "polygon-perf-front"
     restart: always
     ports:
       - "8080:8080"
