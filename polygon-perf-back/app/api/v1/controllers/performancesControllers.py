@@ -29,4 +29,4 @@ def get_trackings_since(db: Session, since: datetime.timedelta):
         return PerformanceBase(
             min_resp=minresp, max_resp=maxresp, avg_resp=avgresp / len(trackings)
         )
-    return None
+    return PerformanceBase(min_resp=0.0, max_resp=0.0, avg_resp=0.0)
